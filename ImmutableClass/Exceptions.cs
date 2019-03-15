@@ -5,7 +5,23 @@ using System.Linq;
 
 namespace ImmutableClassLibrary.Exceptions
 {
-    public  class InvalidPropertySettingAttempt<T> : Exception
+    public class ImmutableObjectInvalidCreationException : Exception
+    {
+        public  ImmutableObjectInvalidCreationException() : base("An immutable object can only be created via the static Create<T> method.")
+        {
+
+        }
+    }
+
+    public class ImmutableObjectEditException : Exception  
+    {
+        public ImmutableObjectEditException() : base("An immutable object cannot be changed after it has been created.")
+        {
+
+        }
+    }
+
+    public class InvalidPropertySettingAttempt<T> : Exception
     {
         public InvalidPropertySettingAttempt(string property, T value) : base($"Error setting {property}. Immutable Class Instance Properties are readonly.")
         {

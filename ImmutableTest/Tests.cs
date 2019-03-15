@@ -23,13 +23,15 @@ namespace ImmutableClassLibraryTests
 
         
         {
-            var obj = new { FirstName = "John", LastName = "Petersen" };
 
-            var json = JsonConvert.SerializeObject(obj);
 
-            var sut = ImmutableClass.Create<ImmutableTest>(json);
+            var token = ImmutableClass.Create<ImmutableTest>(
+                JsonConvert.SerializeObject(
+                    new { FirstName = "John", LastName = "Petersen" }))
+                .ToString(true).Substring(2,32);
 
-            var token = sut.GetToken();
+
+
 
             Regex.Match(@"^[{(]?[0-9A-F]{8}[-]?([0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$", token);
         }
@@ -48,84 +50,9 @@ namespace ImmutableClassLibraryTests
 
             var sut = ImmutableClass.Create<ImmutableTest>(json);
 
-            Assert.IsTrue(sut.IsLocked());
         }
 
-        [Test]
-        public void VerifyEquals()
-        {
-
-            var json1 =
-                "{\"FirstName\":\"John\",\"LastName\":\"Petersen\",\"Schools\":{\"MBA\":{\"Institution\":\"St. Joseph\'s University\",\"Year\":\"1993\",\"Degree\":\"MBA\"},\"JD\":{\"Institution\":\"Rutgers University School of Law\",\"Year\":\"2004\",\"Degree\":\"JD\"},\"BS\":{\"Institution\":\"Mansfield University\",\"Year\":\"1988\",\"Degree\":\"BS\"}}}";
-
-            var json2 =
-                "{\"FirstName\":\"JOHN\",\"LastName\":\"Petersen\",\"Schools\":{\"MBA\":{\"Institution\":\"St. Joseph\'s University\",\"Year\":\"1993\",\"Degree\":\"MBA\"},\"JD\":{\"Institution\":\"Rutgers University School of Law\",\"Year\":\"2004\",\"Degree\":\"JD\"},\"BS\":{\"Institution\":\"Mansfield University\",\"Year\":\"1988\",\"Degree\":\"BS\"}}}";
-
-            var obj1 = ImmutableClass.Create<ImmutableTest>(json1);
-            var obj2 = ImmutableClass.Create<ImmutableTest>(json2);
-
-            Assert.IsFalse(obj1.IsEqual(obj2).IsEqual);
-
-            obj1 = new ImmutableTest() {FirstName = "John"};
-            obj1.Lock();
-
-            obj2 = new ImmutableTest() { FirstName = "John" };
-
-            Assert.IsFalse(obj1.IsEqual(obj2).IsEqual);
-
-            obj2.Lock();
-
-            Assert.IsTrue(obj1.IsEqual(obj2).IsEqual);
-
-            var address = new Address();
-
-            var results = address.IsEqual(obj1);
-
-
-            Assert.IsFalse(results.IsEqual);
-
-
-
-        }
-
-
-        [Test]
-        public void CanLock()
-        {
-            var sut = new ImmutableTest() { FirstName = "John" };
-
-            var propertyStatus = sut.GetPropertyStatus();
-
-            Assert.IsTrue(propertyStatus["FirstName"]);
-            Assert.IsFalse(propertyStatus["Schools"]);
-            Assert.IsFalse(propertyStatus["LastName"]);
-
-            Assert.IsFalse(sut.IsLocked());
-
-            sut.Lock();
-
-            propertyStatus = sut.GetPropertyStatus();
-
-            Assert.IsTrue(propertyStatus["FirstName"]);
-            Assert.IsTrue(propertyStatus["Schools"]);
-            Assert.IsTrue(propertyStatus["LastName"]);
-
-            Assert.IsTrue(sut.IsLocked());
-        }
-
-        [Test]
-        public void VerifyPropertyStatus()
-        {
-            var sut = new ImmutableTest() {FirstName = "John"};
-
-            var propertyStatus = sut.GetPropertyStatus();
-
-            Assert.IsFalse(propertyStatus["Schools"]);
-            Assert.IsFalse(propertyStatus["LastName"]);
-        }
-
-
-
+      
 
         [Test]
         public void VerifyRoundTripWithNoException()
@@ -135,6 +62,7 @@ namespace ImmutableClassLibraryTests
 
 
             var sut = ImmutableClass.Create<ImmutableTest>(json);
+
 
             json = sut.ToString();
 
@@ -146,30 +74,12 @@ namespace ImmutableClassLibraryTests
 
             sut = ImmutableClass.Create<ImmutableTest>(jObject.ToString());
 
+
             Assert.AreEqual("M.B.A.", sut.Schools["MBA"].Degree);
         }
 
 
-        [Test]
-        public void CanDeserializeNewInstanceWithUpdatedFirstNameWithException()
-        {
-            var expected = "Error setting FirstName. Immutable Class Instance Properties are readonly.";
-
-
-            var json =
-                "{\"FirstName\":\"John\",\"LastName\":\"Petersen\",\"Schools\":{\"MBA\":{\"Institution\":\"St. Joseph\'s University\",\"Year\":\"1993\",\"Degree\":\"MBA\"},\"JD\":{\"Institution\":\"Rutgers University School of Law\",\"Year\":\"2004\",\"Degree\":\"JD\"},\"BS\":{\"Institution\":\"Mansfield University\",\"Year\":\"1988\",\"Degree\":\"BS\"}}}";
-
-            var exception =
-                Assert.Throws<InvalidPropertySettingAttempt<string>>(() =>
-                {
-                    var sut = ImmutableClass.Create<ImmutableTest>(json);
-
-                    sut.FirstName = "JOHN";
-                });
-
-            Assert.AreEqual(expected, exception.Message);
-        }
-
+      
 
         [Test]
         public void CanDeserializeNewInstanceWithUpdatedFirstName()
