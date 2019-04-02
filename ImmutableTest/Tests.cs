@@ -20,25 +20,45 @@ namespace ImmutableClassLibraryTests
 
         [Test]
         public void CanGetToken()
-
         
         {
-
-
             var token = ImmutableClass.Create<ImmutableTest>(
                 JsonConvert.SerializeObject(
                     new { FirstName = "John", LastName = "Petersen" }))
-                .ToString(true).Substring(2,32);
-
-
-
+                .ToString().Substring(2,32);
 
             Regex.Match(@"^[{(]?[0-9A-F]{8}[-]?([0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$", token);
         }
 
 
 
+        [Test]
+        public void VerifyIsEqual()
+        {
 
+
+            var json = 
+                "{\"FirstName\":\"John\",\"LastName\":\"Petersen\",\"Schools\":{\"MBA\":{\"Institution\":\"St. Joseph\'s University\",\"Year\":\"1993\",\"Degree\":\"MBA\"},\"JD\":{\"Institution\":\"Rutgers University School of Law\",\"Year\":\"2004\",\"Degree\":\"JD\"},\"BS\":{\"Institution\":\"Mansfield University\",\"Year\":\"1988\",\"Degree\":\"BS\"}}}";
+
+            var obj1 = ImmutableClass.Create<ImmutableTest>(json);
+
+            var x = ImmutableClass.Convert<ImmutableTest>(obj1);
+
+           x["FirstName"] = "JOHN";
+
+           var obj2 = ImmutableClass.Create<ImmutableTest>(x.ToString());
+
+
+           Assert.IsFalse(obj1.IsEqual(obj2));
+
+           x["FirstName"] = "John";
+
+           obj2 = ImmutableClass.Create<ImmutableTest>(x.ToString());
+
+           Assert.IsTrue(obj1.IsEqual(obj2));
+
+
+        }
 
 
         [Test]
@@ -60,21 +80,31 @@ namespace ImmutableClassLibraryTests
             var json =
                 "{\"FirstName\":\"John\",\"LastName\":\"Petersen\",\"Schools\":{\"MBA\":{\"Institution\":\"St. Joseph\'s University\",\"Year\":\"1993\",\"Degree\":\"MBA\"},\"JD\":{\"Institution\":\"Rutgers University School of Law\",\"Year\":\"2004\",\"Degree\":\"JD\"},\"BS\":{\"Institution\":\"Mansfield University\",\"Year\":\"1988\",\"Degree\":\"BS\"}}}";
 
-
             var sut = ImmutableClass.Create<ImmutableTest>(json);
 
 
+
+
             json = sut.ToString();
+            var token = json.Substring(2, 36);
 
             var jObject = JObject.Parse(json);
 
-            jObject["FirstName"] = "JOHN";
+            var jx = jObject.ToString();
 
-            jObject["Schools"]["MBA"]["Degree"] = "M.B.A.";
+            jObject[token]["FirstName"] = "JOHN";
 
-            sut = ImmutableClass.Create<ImmutableTest>(jObject.ToString());
+            jObject[token]["Schools"]["MBA"]["Degree"] = "M.B.A.";
+
+            json = jObject.ToString();
 
 
+            json = json.Substring(45, (json.Length - 46));
+
+
+            sut = ImmutableClass.Create<ImmutableTest>(json);
+
+            token = sut.ToString().Substring(2, 36);
             Assert.AreEqual("M.B.A.", sut.Schools["MBA"].Degree);
         }
 
@@ -100,89 +130,53 @@ namespace ImmutableClassLibraryTests
         [Test]
         public void VerifyJsonToString()
         {
-            var sut = new ImmutableTest()
-            {
-                FirstName = "John",
-                LastName = "Petersen",
-                Schools = (new Dictionary<string, School>()
-                {
-                    {"BS", CreateSchool("Mansfield University", "1988", "BS")},
-                    {"MBA", CreateSchool("St. Joseph's University", "1993", "MBA")},
-                    {"JD", CreateSchool("Rutgers University School of Law", "2004", "JD")}
-                }).ToImmutableDictionary()
-            };
+            var sut = ImmutableClass.Create<ImmutableTest>("{\"FirstName\":\"John\",\"LastName\":\"Petersen\"}");
 
-
-            var expected =
-                "{\"FirstName\":\"John\",\"LastName\":\"Petersen\",\"Schools\":{\"MBA\":{\"Institution\":\"St. Joseph\'s University\",\"Year\":\"1993\",\"Degree\":\"MBA\"},\"JD\":{\"Institution\":\"Rutgers University School of Law\",\"Year\":\"2004\",\"Degree\":\"JD\"},\"BS\":{\"Institution\":\"Mansfield University\",\"Year\":\"1988\",\"Degree\":\"BS\"}}}";
-
-
-            var actual = sut.ToString();
-
-
-            Assert.AreEqual(expected, sut.ToString());
         }
 
 
         [Test]
         public void AttemptDictionaryImmutablePropertyWithExceptionTrueThrowsException()
         {
-            var expected = "Error setting Schools. Immutable Class Instance Properties are readonly.";
+            var expected = "An immutable object cannot be changed after it has been created.";
 
-
-            var exception = Assert.Throws<InvalidPropertySettingAttempt<ImmutableDictionary<string, School>>>(() =>
+            var exception = Assert.Throws<ImmutableObjectEditException>(() =>
             {
-                var sut = new ImmutableTest()
+                var obj = new
                 {
                     FirstName = "John",
-                    LastName = "Petersen",
-                    Schools = (new Dictionary<string, School>()
-                    {
-                        {"BS", CreateSchool("Mansfield University", "1988", "BS")},
-                        {"MBA", CreateSchool("St. Joseph's University", "1993", "MBA")},
-                        {"JD", CreateSchool("Rutgers University School of Law", "2004", "JD")}
-                    }).ToImmutableDictionary()
+                    LastName = "Petersen"
                 };
 
-                sut.Schools = new Dictionary<string, School>().ToImmutableDictionary();
+                var sut = ImmutableClass.Create<ImmutableTest>(JsonConvert.SerializeObject(obj));
+                sut.FirstName = "FOO";
             });
 
             Assert.AreEqual(expected, exception.Message);
         }
 
-
-        [Test]
-        public void AttemptStringImmutablePropertyWithExceptionTrueThrowsException()
-        {
-            Assert.Throws<InvalidPropertySettingAttempt<string>>(() =>
-            {
-                var sut = new ImmutableTest() {FirstName = "John"};
-                sut.FirstName = "FOO";
-            });
-        }
-
         [Test]
         public void AttemptToDefineInvalidPropertyTypeThrowsException()
         {
-            var expectedMessage =
-                "Properties of an instance of ImmutableClass may only contain the following types: Boolean, Byte, " +
-                "SByte, Char, Decimal, Double, Single, Int32, UInt32, Int64, UInt64, Int16, UInt16, String, ImmutableArray, " +
-                "ImmutableDictionary, ImmutableList, ImmutableQueue, ImmutableSortedSet, ImmutableStack or ImmutableClass. " +
-                "Invalid property types: List";
-            var exception = Assert.Throws<InvalidDataTypeException>(
+            var expected =
+                "Properties of an instance of ImmutableClass may only contain the following types: Boolean, Byte, SByte, Char, Decimal, Double, Single, Int32, UInt32, Int64, UInt64, Int16, UInt16, String, ImmutableArray, ImmutableDictionary, ImmutableList, ImmutableQueue, ImmutableSortedSet, ImmutableStack or ImmutableClass. Invalid property types: List";
+
+
+            var exception = Assert.Throws<TargetInvocationException>(
                 () =>
                 {
-                    var sut = new InvalidImmutableTestDefintion();
+                    ImmutableClass.Create<InvalidImmutableTestDefintion>();
                 }
             );
 
-            Assert.AreEqual(expectedMessage, exception.Message);
+            Assert.AreEqual(expected, exception.InnerException.Message);
+            Console.WriteLine();
         }
-
-
 
         public class InvalidImmutableTestDefintion : ImmutableClass
         {
+
+            public string FirstName { get; set; }
             public List<string> InvalidProperty { get; set; }
         }
 
@@ -194,14 +188,8 @@ namespace ImmutableClassLibraryTests
 
             var person = ImmutableClass.Create<Person>(json);
 
-
-            var wrappedJSON = person.ToString(true);
-
-            var person2 = ImmutableClass.Create<Person>(wrappedJSON);
+            Assert.AreEqual("John",person.FirstName);
         }
-
-
-
 
         public class Person : ImmutableClass
         {
@@ -222,16 +210,6 @@ namespace ImmutableClassLibraryTests
                 set => Setter(MethodBase.GetCurrentMethod().Name.Substring(4), value, ref _lastName);
             }
 
-
-            private Address _address;
-
-            public Address Address
-            {
-                get => _address;
-                set => Setter(MethodBase.GetCurrentMethod().Name.Substring(4), value, ref _address);
-
-            }
-
             private ImmutableArray<string> _schools;
 
             public ImmutableArray<string> Schools
@@ -240,15 +218,6 @@ namespace ImmutableClassLibraryTests
                 set => Setter(MethodBase.GetCurrentMethod().Name.Substring(4), value, ref _schools);
             }
         }
-
-        public class Address : ImmutableClass
-        {
-        }
-
-
-
-
-
 
         public class ImmutableTest : ImmutableClass
         {
@@ -304,9 +273,5 @@ namespace ImmutableClassLibraryTests
             }
         }
 
-        public static School CreateSchool(string institution, string year, string degree)
-        {
-            return new School() {Institution = institution, Year = year, Degree = degree};
-        }
     }
 }

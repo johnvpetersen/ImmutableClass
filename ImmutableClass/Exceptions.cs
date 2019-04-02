@@ -21,13 +21,6 @@ namespace ImmutableClassLibrary.Exceptions
         }
     }
 
-    public class InvalidPropertySettingAttempt<T> : Exception
-    {
-        public InvalidPropertySettingAttempt(string property, T value) : base($"Error setting {property}. Immutable Class Instance Properties are readonly.")
-        {
-            Data.Add("PropertyNameandValue", new KeyValuePair<string, T>(property, value));
-        }
-    }
 
     public  class InvalidDataTypeException : Exception
     {
