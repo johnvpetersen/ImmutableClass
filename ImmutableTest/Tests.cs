@@ -14,6 +14,7 @@ using NUnit.Framework;
 namespace ImmutableClassLibraryTests
 {
 
+    [ExcludeFromCodeCoverage]
     public class SimpleImmutableClass
     {
         public SimpleImmutableClass(string firstName, string lastName, List<string> items)
@@ -29,14 +30,14 @@ namespace ImmutableClassLibraryTests
     }
 
 
+    [ExcludeFromCodeCoverage]
+
     public struct PersonX
     {
         public string FirstName;
         public string LastName;
         public List<string> Items;
     }
-
-
 
 
     [TestFixture]
@@ -64,12 +65,7 @@ namespace ImmutableClassLibraryTests
                         { FirstName = "John",
                           LastName = "Petersen"}
                     );
-
-
-          
-
         }
-
 
         [Test]
         public void CanCreatePersonStruct()
@@ -78,10 +74,7 @@ namespace ImmutableClassLibraryTests
             sut.Items = new List<string>();
             sut.FirstName = "john";
             sut.Items.Add("Structs are not immutable!");
-
         }
-
-
 
         [Test]
         public void CanCreateSimpleImmutableClass()
@@ -158,9 +151,6 @@ namespace ImmutableClassLibraryTests
 
             var sut = ImmutableClass.Create<ImmutableTest>(json);
 
-
-
-
             json = sut.ToString();
             var token = json.Substring(2, 36);
 
@@ -208,6 +198,21 @@ namespace ImmutableClassLibraryTests
         {
             var sut = ImmutableClass.Create<ImmutableTest>("{\"FirstName\":\"John\",\"LastName\":\"Petersen\"}");
 
+        }
+
+        [Test]
+        public void VerifyStrictCreate()
+
+        {
+        var expected = "An immutable object can only be created via the static Create<T> method.";
+
+        var exception = Assert.Throws<ImmutableObjectInvalidCreationException>(() =>
+        {
+            var sut = new Person(true);
+
+        });
+
+        Assert.AreEqual(expected,exception.Message);
         }
 
 
@@ -267,8 +272,21 @@ namespace ImmutableClassLibraryTests
             Assert.AreEqual("John",person.FirstName);
         }
 
+
+
         public class Person : ImmutableClass
         {
+            public Person() : base(false)
+            {
+
+            }
+
+            public Person(bool strictCreate) : base(strictCreate)
+            {
+
+            }
+
+
 
             private string _firstName;
 
