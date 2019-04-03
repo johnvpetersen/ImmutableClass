@@ -12,23 +12,48 @@ namespace ImmutableClassLibrary.Classes
     {
         private bool _lock;
 
-        protected ImmutableClass()
+
+        protected ImmutableClass() : this(false)
         {
-          if ( new StackTrace().GetFrames().ToList().Select(x => x.GetMethod()).Count(x => x.Name == "Create" && x.DeclaringType.Name == "ImmutableClass") == 0)
-                 throw new ImmutableObjectInvalidCreationException();
 
-          var properties =
-                GetType().GetProperties().Where(x => x.PropertyType.BaseType.Name != "ImmutableClass")
-                    .Select(x => x.PropertyType.Name.Substring(0,
+        }
+
+
+        protected ImmutableClass(bool strictCreate)
+        {
+
+
+            if (strictCreate &&    new StackTrace()
+                     .GetFrames()
+                     .ToList()
+                     .Select(x => x.GetMethod())
+                     .Count(x => x.Name == "Create" &&
+                                 x.DeclaringType.Name == "ImmutableClass") == 0)
+                throw new ImmutableObjectInvalidCreationException();
+
+            var properties =
+                GetType()
+                    .GetProperties()
+                    .Where(x => x.PropertyType.BaseType.Name 
+                                != "ImmutableClass")
+                    .Select(x => 
+                        x.PropertyType.Name.Substring(0,
                         (x.PropertyType.Name.Contains("`")
-                            ? x.PropertyType.Name.IndexOf("`", StringComparison.Ordinal)
-                            : x.PropertyType.Name.Length))).ToImmutableHashSet();
+                            ? x.PropertyType.Name.IndexOf("`", 
+                                StringComparison.Ordinal)
+                            : x.PropertyType.Name.Length)))
+                    .ToImmutableHashSet();
 
-            var invalidProperties = properties.Except(InvalidDataTypeException.ValidImmutableClassTypes);
+            var invalidProperties = 
+                properties
+                    .Except(InvalidDataTypeException
+                        .ValidImmutableClassTypes);
 
             if (invalidProperties.Count > 0)
 
-                throw new InvalidDataTypeException(invalidProperties);
+                throw new InvalidDataTypeException(
+                    invalidProperties
+                    );
         }
 
         private readonly string _token = Guid.NewGuid().ToString();
@@ -44,11 +69,11 @@ namespace ImmutableClassLibrary.Classes
         
         public bool IsEqual<T>(T objToCompare) where T : ImmutableClass =>  !(GetType() != objToCompare.GetType() || JsonConvert.SerializeObject(this) != JsonConvert.SerializeObject(objToCompare));
 
-        public static T Create<T>() where T : ImmutableClass
+        public static T Create<T>(T instance) where T : ImmutableClass
         {
-            ImmutableClass retVal = Activator.CreateInstance<T>();
-            retVal._lock = true;
-            return (T)retVal;
+
+            instance._lock = true;
+            return instance;
         }
 
         public static T  Create<T>(string json) where T : ImmutableClass

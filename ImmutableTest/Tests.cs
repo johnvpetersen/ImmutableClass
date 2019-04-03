@@ -13,10 +13,86 @@ using NUnit.Framework;
 
 namespace ImmutableClassLibraryTests
 {
+
+    public class SimpleImmutableClass
+    {
+        public SimpleImmutableClass(string firstName, string lastName, List<string> items)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Items = items;
+        }
+        //Private setters are implicit
+        public string LastName { get; }
+        public string FirstName { get; }
+        public List<string> Items { get; }
+    }
+
+
+    public struct PersonX
+    {
+        public string FirstName;
+        public string LastName;
+        public List<string> Items;
+    }
+
+
+
+
     [TestFixture]
     [ExcludeFromCodeCoverage]
     public class Tests
     {
+
+
+        [Test]
+        public void TestCreatePerson()
+        {
+            var immutablePerson = 
+                ImmutableClass
+                    .Create<Person>
+                        (
+                        "{\"FirstName\":\"John\"," +
+                        "\"LastName\":\"Petersen\"}"
+                        );
+            //Or
+
+            immutablePerson = 
+                ImmutableClass.Create
+                    (
+                    new Person()
+                        { FirstName = "John",
+                          LastName = "Petersen"}
+                    );
+
+
+          
+
+        }
+
+
+        [Test]
+        public void CanCreatePersonStruct()
+        {
+            var sut = new PersonX() {FirstName = "John", LastName = "Petersen"};
+            sut.Items = new List<string>();
+            sut.FirstName = "john";
+            sut.Items.Add("Structs are not immutable!");
+
+        }
+
+
+
+        [Test]
+        public void CanCreateSimpleImmutableClass()
+        {
+            var sut = new SimpleImmutableClass("John", "Petesen", new List<string>());
+            sut.Items.Add("BS");
+            sut.Items.Add("MBA");
+            sut.Items.Add("JD");
+            
+        }
+
 
         [Test]
         public void CanGetToken()
@@ -159,17 +235,17 @@ namespace ImmutableClassLibraryTests
         public void AttemptToDefineInvalidPropertyTypeThrowsException()
         {
             var expected =
-                "Properties of an instance of ImmutableClass may only contain the following types: Boolean, Byte, SByte, Char, Decimal, Double, Single, Int32, UInt32, Int64, UInt64, Int16, UInt16, String, ImmutableArray, ImmutableDictionary, ImmutableList, ImmutableQueue, ImmutableSortedSet, ImmutableStack or ImmutableClass. Invalid property types: List";
+                "Properties of an instance of ImmutableClass may only contain the following types: Boolean, Byte, SByte, Char, Decimal, Double, Single, Int32, UInt32, Int64, UInt64, Int16, UInt16, String, ImmutableArray, ImmutableDictionary, ImmutableList, ImmutableQueue, ImmutableSortedSet, ImmutableStack or ImmutableClass. Invalid property types:    List";
 
 
-            var exception = Assert.Throws<TargetInvocationException>(
+            var exception = Assert.Throws<InvalidDataTypeException>(
                 () =>
                 {
-                    ImmutableClass.Create<InvalidImmutableTestDefintion>();
+                    ImmutableClass.Create(new InvalidImmutableTestDefintion());
                 }
             );
 
-            Assert.AreEqual(expected, exception.InnerException.Message);
+            Assert.AreEqual(expected, exception.Message);
             Console.WriteLine();
         }
 
@@ -181,7 +257,7 @@ namespace ImmutableClassLibraryTests
         }
 
         [Test]
-        public void TestCreatePerson()
+        public void TestCreatePerson2()
         {
             var json =
                 "{\"FirstName\":\"John\",\"LastName\":\"Petersen\",\"Address\":{},\"Schools\":[\"Mansfield\",\"St. Joseph's\",\"Rutgers\"]}";
@@ -199,7 +275,13 @@ namespace ImmutableClassLibraryTests
             public string FirstName
             {
                 get => _firstName;
-                set => Setter(MethodBase.GetCurrentMethod().Name.Substring(4), value, ref _firstName);
+                set => Setter(
+                    MethodBase
+                        .GetCurrentMethod()
+                        .Name
+                        .Substring(4), 
+                    value, 
+                    ref _firstName);
             }
 
             private string _lastName;
@@ -207,7 +289,13 @@ namespace ImmutableClassLibraryTests
             public string LastName
             {
                 get => _lastName;
-                set => Setter(MethodBase.GetCurrentMethod().Name.Substring(4), value, ref _lastName);
+                set => Setter(
+                    MethodBase
+                        .GetCurrentMethod()
+                        .Name
+                        .Substring(4), 
+                    value, 
+                    ref _lastName);
             }
 
             private ImmutableArray<string> _schools;
@@ -215,7 +303,13 @@ namespace ImmutableClassLibraryTests
             public ImmutableArray<string> Schools
             {
                 get => _schools;
-                set => Setter(MethodBase.GetCurrentMethod().Name.Substring(4), value, ref _schools);
+                set => Setter(
+                    MethodBase
+                        .GetCurrentMethod()
+                        .Name.
+                        Substring(4), 
+                    value, 
+                    ref _schools);
             }
         }
 
