@@ -15,36 +15,33 @@ namespace ImmutableClassLibrary.Classes
 
         protected ImmutableClass() : this(false)
         {
-
         }
 
 
         protected ImmutableClass(bool strictCreate)
         {
-
-
-            if (strictCreate &&    new StackTrace()
-                     .GetFrames()
-                     .ToList()
-                     .Select(x => x.GetMethod())
-                     .Count(x => x.Name == "Create" &&
-                                 x.DeclaringType.Name == "ImmutableClass") == 0)
+            if (strictCreate && new StackTrace()
+                    .GetFrames()
+                    .ToList()
+                    .Select(x => x.GetMethod())
+                    .Count(x => x.Name == "Create" &&
+                                x.DeclaringType.Name == "ImmutableClass") == 0)
                 throw new ImmutableObjectInvalidCreationException();
 
             var properties =
                 GetType()
                     .GetProperties()
-                    .Where(x => x.PropertyType.BaseType.Name 
+                    .Where(x => x.PropertyType.BaseType.Name
                                 != "ImmutableClass")
-                    .Select(x => 
+                    .Select(x =>
                         x.PropertyType.Name.Substring(0,
-                        (x.PropertyType.Name.Contains("`")
-                            ? x.PropertyType.Name.IndexOf("`", 
-                                StringComparison.Ordinal)
-                            : x.PropertyType.Name.Length)))
+                            (x.PropertyType.Name.Contains("`")
+                                ? x.PropertyType.Name.IndexOf("`",
+                                    StringComparison.Ordinal)
+                                : x.PropertyType.Name.Length)))
                     .ToImmutableHashSet();
 
-            var invalidProperties = 
+            var invalidProperties =
                 properties
                     .Except(InvalidDataTypeException
                         .ValidImmutableClassTypes);
@@ -53,7 +50,7 @@ namespace ImmutableClassLibrary.Classes
 
                 throw new InvalidDataTypeException(
                     invalidProperties
-                    );
+                );
         }
 
         private readonly string _token = Guid.NewGuid().ToString();
@@ -65,26 +62,33 @@ namespace ImmutableClassLibrary.Classes
             variable = value;
         }
 
-        public override string ToString() =>  $"{{\"{_token}\":{JsonConvert.SerializeObject(this)}}}";
-        
-        public bool IsEqual<T>(T objToCompare) where T : ImmutableClass =>  !(GetType() != objToCompare.GetType() || JsonConvert.SerializeObject(this) != JsonConvert.SerializeObject(objToCompare));
+        public override string ToString() => $"{{\"{_token}\":{JsonConvert.SerializeObject(this)}}}";
+
+        public bool IsEqual<T>(T objToCompare) where T : ImmutableClass =>
+            !(GetType() != objToCompare.GetType() ||
+              JsonConvert.SerializeObject(this) != JsonConvert.SerializeObject(objToCompare));
 
         public static T Create<T>(T instance) where T : ImmutableClass
         {
-
             instance._lock = true;
             return instance;
         }
 
-        public static T  Create<T>(string json) where T : ImmutableClass
+        public static T Create<T>(string json) where T : ImmutableClass
         {
             ImmutableClass retVal = JsonConvert.DeserializeObject<T>(json);
             retVal._lock = true;
             return (T) retVal;
         }
 
-        public static JObject Convert<T>(T immutableClass) => JsonConvert.DeserializeObject<JObject>(JsonConvert.SerializeObject(immutableClass));
-
-        
+        public static JObject Convert<T>(T immutableClass) =>
+            JsonConvert
+                .DeserializeObject<JObject>
+                (
+                    JsonConvert
+                        .SerializeObject(
+                            immutableClass
+                        )
+                );
     }
 }

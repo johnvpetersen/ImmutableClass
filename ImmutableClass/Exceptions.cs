@@ -7,65 +7,63 @@ namespace ImmutableClassLibrary.Exceptions
 {
     public class ImmutableObjectInvalidCreationException : Exception
     {
-        public  ImmutableObjectInvalidCreationException() : base("An immutable object can only be created via the static Create<T> method.")
+        public ImmutableObjectInvalidCreationException() : base(
+            "An immutable object can only be created via the static Create<T> method.")
         {
-
         }
     }
 
-    public class ImmutableObjectEditException : Exception  
+    public class ImmutableObjectEditException : Exception
     {
         public ImmutableObjectEditException() : base("An immutable object cannot be changed after it has been created.")
         {
-
         }
     }
 
 
-    public  class InvalidDataTypeException : Exception
+    public class InvalidDataTypeException : Exception
     {
-        public static ImmutableHashSet<string> ValidImmutableClassTypes = 
+        public static ImmutableHashSet<string> ValidImmutableClassTypes =
             ImmutableHashSet.Create<string>(
-            "Boolean",
-            "Byte",
-            "SByte",
-            "Char",
-            "Decimal",
-            "Double",
-            "Single",
-            "Int32",
-            "UInt32",
-            "Int64",
-            "UInt64",
-            "Int16",
-            "UInt16",
-            "String",
-            "ImmutableArray",
-            "ImmutableDictionary",
-            "ImmutableList",
-            "ImmutableHashSet",
-            "ImmutableSortedDictionary",
-            "ImmutableSortedSet",
-            "ImmutableStack",
-            "ImmutableQueue"
-        );
+                "Boolean",
+                "Byte",
+                "SByte",
+                "Char",
+                "Decimal",
+                "Double",
+                "Single",
+                "Int32",
+                "UInt32",
+                "Int64",
+                "UInt64",
+                "Int16",
+                "UInt16",
+                "String",
+                "ImmutableArray",
+                "ImmutableDictionary",
+                "ImmutableList",
+                "ImmutableHashSet",
+                "ImmutableSortedDictionary",
+                "ImmutableSortedSet",
+                "ImmutableStack",
+                "ImmutableQueue"
+            );
 
         public InvalidDataTypeException(
             ImmutableHashSet<string> invalidProperties) : base(
-            $"Properties of an instance of " + 
-            "ImmutableClass may only " + 
+            $"Properties of an instance of " +
+            "ImmutableClass may only " +
             "contain the following types: Boolean, Byte, " +
-            "SByte, Char, Decimal, Double, Single, " + 
-            "Int32, UInt32, Int64, " + 
+            "SByte, Char, Decimal, Double, Single, " +
+            "Int32, UInt32, Int64, " +
             "UInt64, Int16, UInt16, String, ImmutableArray, " +
-            "ImmutableDictionary, ImmutableList, ImmutableQueue, " + 
+            "ImmutableDictionary, ImmutableList, ImmutableQueue, " +
             "ImmutableSortedSet, ImmutableStack or ImmutableClass. " +
-            
             $"Invalid property types: " +
             $"   {string.Join(",", invalidProperties.ToArray())}")
         {
-            Data.Add("InvalidPropertyTypes", 
+            Data.Add("InvalidPropertyTypes",
                 invalidProperties.ToArray());
         }
     }
- }
+}

@@ -13,7 +13,6 @@ using NUnit.Framework;
 
 namespace ImmutableClassLibraryTests
 {
-
     [ExcludeFromCodeCoverage]
     public class SimpleImmutableClass
     {
@@ -23,6 +22,7 @@ namespace ImmutableClassLibraryTests
             LastName = lastName;
             Items = items;
         }
+
         //Private setters are implicit
         public string LastName { get; }
         public string FirstName { get; }
@@ -31,7 +31,6 @@ namespace ImmutableClassLibraryTests
 
 
     [ExcludeFromCodeCoverage]
-
     public struct PersonX
     {
         public string FirstName;
@@ -44,27 +43,27 @@ namespace ImmutableClassLibraryTests
     [ExcludeFromCodeCoverage]
     public class Tests
     {
-
-
         [Test]
         public void TestCreatePerson()
         {
-            var immutablePerson = 
+            var immutablePerson =
                 ImmutableClass
                     .Create<Person>
-                        (
+                    (
                         "{\"FirstName\":\"John\"," +
                         "\"LastName\":\"Petersen\"}"
-                        );
+                    );
             //Or
 
-            immutablePerson = 
+            immutablePerson =
                 ImmutableClass.Create
-                    (
+                (
                     new Person()
-                        { FirstName = "John",
-                          LastName = "Petersen"}
-                    );
+                    {
+                        FirstName = "John",
+                        LastName = "Petersen"
+                    }
+                );
         }
 
         [Test]
@@ -83,50 +82,44 @@ namespace ImmutableClassLibraryTests
             sut.Items.Add("BS");
             sut.Items.Add("MBA");
             sut.Items.Add("JD");
-            
         }
 
 
         [Test]
         public void CanGetToken()
-        
+
         {
             var token = ImmutableClass.Create<ImmutableTest>(
-                JsonConvert.SerializeObject(
-                    new { FirstName = "John", LastName = "Petersen" }))
-                .ToString().Substring(2,32);
+                    JsonConvert.SerializeObject(
+                        new {FirstName = "John", LastName = "Petersen"}))
+                .ToString().Substring(2, 32);
 
             Regex.Match(@"^[{(]?[0-9A-F]{8}[-]?([0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$", token);
         }
 
 
-
         [Test]
         public void VerifyIsEqual()
         {
-
-
-            var json = 
+            var json =
                 "{\"FirstName\":\"John\",\"LastName\":\"Petersen\",\"Schools\":{\"MBA\":{\"Institution\":\"St. Joseph\'s University\",\"Year\":\"1993\",\"Degree\":\"MBA\"},\"JD\":{\"Institution\":\"Rutgers University School of Law\",\"Year\":\"2004\",\"Degree\":\"JD\"},\"BS\":{\"Institution\":\"Mansfield University\",\"Year\":\"1988\",\"Degree\":\"BS\"}}}";
 
             var obj1 = ImmutableClass.Create<ImmutableTest>(json);
 
             var x = ImmutableClass.Convert<ImmutableTest>(obj1);
 
-           x["FirstName"] = "JOHN";
+            x["FirstName"] = "JOHN";
 
-           var obj2 = ImmutableClass.Create<ImmutableTest>(x.ToString());
-
-
-           Assert.IsFalse(obj1.IsEqual(obj2));
-
-           x["FirstName"] = "John";
-
-           obj2 = ImmutableClass.Create<ImmutableTest>(x.ToString());
-
-           Assert.IsTrue(obj1.IsEqual(obj2));
+            var obj2 = ImmutableClass.Create<ImmutableTest>(x.ToString());
 
 
+            Assert.IsFalse(obj1.IsEqual(obj2));
+
+            x["FirstName"] = "John";
+
+            obj2 = ImmutableClass.Create<ImmutableTest>(x.ToString());
+
+            Assert.IsTrue(obj1.IsEqual(obj2));
         }
 
 
@@ -138,10 +131,8 @@ namespace ImmutableClassLibraryTests
             var json = JsonConvert.SerializeObject(obj);
 
             var sut = ImmutableClass.Create<ImmutableTest>(json);
-
         }
 
-      
 
         [Test]
         public void VerifyRoundTripWithNoException()
@@ -175,8 +166,6 @@ namespace ImmutableClassLibraryTests
         }
 
 
-      
-
         [Test]
         public void CanDeserializeNewInstanceWithUpdatedFirstName()
         {
@@ -197,22 +186,20 @@ namespace ImmutableClassLibraryTests
         public void VerifyJsonToString()
         {
             var sut = ImmutableClass.Create<ImmutableTest>("{\"FirstName\":\"John\",\"LastName\":\"Petersen\"}");
-
         }
 
         [Test]
         public void VerifyStrictCreate()
 
         {
-        var expected = "An immutable object can only be created via the static Create<T> method.";
+            var expected = "An immutable object can only be created via the static Create<T> method.";
 
-        var exception = Assert.Throws<ImmutableObjectInvalidCreationException>(() =>
-        {
-            var sut = new Person(true);
+            var exception = Assert.Throws<ImmutableObjectInvalidCreationException>(() =>
+            {
+                var sut = new Person(true);
+            });
 
-        });
-
-        Assert.AreEqual(expected,exception.Message);
+            Assert.AreEqual(expected, exception.Message);
         }
 
 
@@ -244,10 +231,7 @@ namespace ImmutableClassLibraryTests
 
 
             var exception = Assert.Throws<InvalidDataTypeException>(
-                () =>
-                {
-                    ImmutableClass.Create(new InvalidImmutableTestDefintion());
-                }
+                () => { ImmutableClass.Create(new InvalidImmutableTestDefintion()); }
             );
 
             Assert.AreEqual(expected, exception.Message);
@@ -256,7 +240,6 @@ namespace ImmutableClassLibraryTests
 
         public class InvalidImmutableTestDefintion : ImmutableClass
         {
-
             public string FirstName { get; set; }
             public List<string> InvalidProperty { get; set; }
         }
@@ -269,23 +252,19 @@ namespace ImmutableClassLibraryTests
 
             var person = ImmutableClass.Create<Person>(json);
 
-            Assert.AreEqual("John",person.FirstName);
+            Assert.AreEqual("John", person.FirstName);
         }
-
 
 
         public class Person : ImmutableClass
         {
             public Person() : base(false)
             {
-
             }
 
             public Person(bool strictCreate) : base(strictCreate)
             {
-
             }
-
 
 
             private string _firstName;
@@ -297,8 +276,8 @@ namespace ImmutableClassLibraryTests
                     MethodBase
                         .GetCurrentMethod()
                         .Name
-                        .Substring(4), 
-                    value, 
+                        .Substring(4),
+                    value,
                     ref _firstName);
             }
 
@@ -311,8 +290,8 @@ namespace ImmutableClassLibraryTests
                     MethodBase
                         .GetCurrentMethod()
                         .Name
-                        .Substring(4), 
-                    value, 
+                        .Substring(4),
+                    value,
                     ref _lastName);
             }
 
@@ -324,9 +303,8 @@ namespace ImmutableClassLibraryTests
                 set => Setter(
                     MethodBase
                         .GetCurrentMethod()
-                        .Name.
-                        Substring(4), 
-                    value, 
+                        .Name.Substring(4),
+                    value,
                     ref _schools);
             }
         }
@@ -384,6 +362,5 @@ namespace ImmutableClassLibraryTests
                 set => Setter(MethodBase.GetCurrentMethod().Name.Substring(4), value, ref _degree);
             }
         }
-
     }
 }
