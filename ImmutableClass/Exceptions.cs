@@ -30,6 +30,7 @@ namespace ImmutableClassLibrary.Exceptions
                 "SByte",
                 "Char",
                 "Decimal",
+                "DateTime",
                 "Double",
                 "Single",
                 "Int32",

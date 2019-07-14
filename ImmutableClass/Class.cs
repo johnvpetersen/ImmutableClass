@@ -74,9 +74,13 @@ namespace ImmutableClassLibrary.Classes
             return instance;
         }
 
-        public static T Create<T>(string json) where T : ImmutableClass
+
+      
+
+
+        public static T Create<T>(string json, JsonConverter[] jsonConverters = null) where T : ImmutableClass
         {
-            ImmutableClass retVal = JsonConvert.DeserializeObject<T>(json);
+            ImmutableClass retVal = JsonConvert.DeserializeObject<T>(json, jsonConverters);
             retVal._lock = true;
             return (T) retVal;
         }
