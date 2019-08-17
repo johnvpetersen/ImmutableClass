@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Class.cs" />
     <Compile Include="Exceptions.cs" />
+    <Compile Include="ImmutableValueTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
