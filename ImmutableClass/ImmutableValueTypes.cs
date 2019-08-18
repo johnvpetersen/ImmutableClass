@@ -1,10 +1,20 @@
 ﻿using System;
+using System.Collections.Immutable;
 
 namespace ImmutableClassLibrary
 {
 
     public static class ImmutableExtension
     {
+
+
+
+
+        public static ImmutableDateTime ToImmutable(this DateTime value)
+        {
+            return new ImmutableDateTime(value);
+        }
+
 
         public static ImmutableBoolean ToImmutable(this Boolean value)
         {
@@ -79,6 +89,20 @@ namespace ImmutableClassLibrary
 
 
 
+
+    public class ImmutableDateTime : ImmutableType<DateTime>
+    {
+        public ImmutableDateTime(DateTime value) : base(value)
+        {
+
+        }
+
+        public static ImmutableDateTime Create(DateTime value) => new ImmutableDateTime(value);
+
+
+    }
+
+
     public class ImmutableString : ImmutableType<String>
     {
         public ImmutableString(String value) : base(value)
@@ -87,6 +111,9 @@ namespace ImmutableClassLibrary
         }
 
         public static ImmutableString Create(string value) => new ImmutableString(value);
+
+        public static implicit operator ImmutableString(string value) => ImmutableString.Create(value);
+
 
 
     }

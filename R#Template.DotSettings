@@ -1,0 +1,24 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/Shortcut/@EntryValue">immutable</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/Description/@EntryValue">Create immutable fields</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/Text/@EntryValue">  private Immutable$Type$ _$BackingVariable$;&#xD;
+&#xD;
+            public Immutable$Type$ $PropertyName$&#xD;
+            {&#xD;
+                get =&gt; _$BackingVariable$;&#xD;
+                set =&gt; _$BackingVariable$ = _$BackingVariable$ ?? value;&#xD;
+            }</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/Scope/=139FF4CE89E7094686FDA7BF5FFBBE92/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/Scope/=139FF4CE89E7094686FDA7BF5FFBBE92/Type/@EntryValue">Everywhere</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/Field/=Type/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/Field/=Type/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/Field/=BackingVariable/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/Field/=BackingVariable/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/Field/=PropertyName/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/Field/=PropertyName/Expression/@EntryValue">capitalize(BackingVariable)</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/Field/=PropertyName/InitialRange/@EntryValue">1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5336E814E4D3754085DE944F561FFEE3/Field/=PropertyName/Order/@EntryValue">2</s:Int64></wpf:ResourceDictionary>

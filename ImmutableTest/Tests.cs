@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using ImmutableClassLibrary;
 using ImmutableClassLibrary.Classes;
 using ImmutableClassLibrary.Exceptions;
 using Newtonsoft.Json;
@@ -244,6 +246,24 @@ namespace ImmutableClassLibraryTests
             public List<string> InvalidProperty { get; set; }
         }
 
+
+        [Test]
+        public void TestCreateCustomer()
+        {
+
+            var sut = new ImmutableCustomer() {FirstName = "John"};
+
+            Assert.IsTrue(sut.FirstName == "John");
+
+            sut.FirstName = ImmutableString.Create("JP");
+
+            Assert.AreEqual("John", sut.FirstName.Value);
+
+
+
+        }
+
+
         [Test]
         public void TestCreatePerson2()
         {
@@ -254,6 +274,105 @@ namespace ImmutableClassLibraryTests
 
             Assert.AreEqual("John", person.FirstName);
         }
+
+        public class ImmutableCustomer
+        {
+
+
+            private ImmutableString _firstName;
+
+            public ImmutableString FirstName
+            {
+                get => _firstName;
+                set => _firstName = _firstName ?? value;
+            }
+
+
+            private ImmutableString _middleInitial;
+
+            public ImmutableString MiddleInitial
+            {
+                get => _middleInitial;
+                set => _middleInitial = _middleInitial ?? value;
+            }   
+
+
+            private ImmutableString _lastName;
+
+            public ImmutableString LastName
+            {
+                get => _lastName;
+                set => _lastName = _lastName ?? value;
+            }
+
+            private ImmutableString _street;
+
+            public ImmutableString Street
+            {
+                get => _street;
+                set => _street = _street ?? value;
+            }
+
+            private ImmutableString _city;
+
+            public ImmutableString City
+            {
+                get => _city;
+                set => _city = _city ?? value;
+            }
+
+            private ImmutableString _state;
+
+            public ImmutableString State
+            {
+                get => _state;
+                set => _state = _state ?? value;
+            }
+
+            private ImmutableString _zip;
+
+            public ImmutableString Zip
+            {
+                get => _zip;
+                set => _zip = _zip ?? value;
+            }
+
+            private ImmutableBoolean _active;
+
+            public ImmutableBoolean Active
+            {
+                get => _active;
+                set => _active = _active ?? value;
+            }
+
+            private ImmutableDateTime _customerSince;
+
+            public ImmutableDateTime CustomerSince
+            {
+                get => _customerSince;
+                set => _customerSince = _customerSince ?? value;
+            }
+
+            private ImmutableInt32 _pointBalance;
+
+            public ImmutableInt32 PointBalance
+            {
+                get => _pointBalance;
+                set => _pointBalance = _pointBalance ?? value;
+            }
+
+            private ImmutableString _tin;
+
+            public ImmutableString TIN
+            {
+                get => _tin;
+                set => _tin = _tin ?? value;
+            }
+
+
+
+        }
+
 
 
         public class Person : ImmutableClass
