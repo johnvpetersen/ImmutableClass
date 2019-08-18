@@ -85,15 +85,23 @@ namespace ImmutableClassLibrary
         {
 
         }
+
+        public static ImmutableString Create(string value) => new ImmutableString(value);
+
+
     }
 
 
     public class ImmutableBoolean : ImmutableType<Boolean>
     {
-        public ImmutableBoolean(Boolean value) : base(value)
+        public ImmutableBoolean(Boolean value = false) : base(value)
         {
 
         }
+
+        public static ImmutableBoolean Create(Boolean value) => new ImmutableBoolean(value);
+
+
     }
 
     public class ImmutableByte : ImmutableType<Byte>
@@ -102,6 +110,10 @@ namespace ImmutableClassLibrary
         {
 
         }
+
+        public static ImmutableByte Create(Byte value) => new ImmutableByte(value);
+
+
     }
 
     public class ImmutableSByte : ImmutableType<SByte>
@@ -110,6 +122,9 @@ namespace ImmutableClassLibrary
         {
 
         }
+
+        public static ImmutableSByte Create(SByte value) => new ImmutableSByte(value);
+
     }
 
     public class ImmutableChar : ImmutableType<Char>
@@ -118,6 +133,9 @@ namespace ImmutableClassLibrary
         {
 
         }
+
+        public static ImmutableChar Create(Char value) => new ImmutableChar(value);
+
     }
 
 
@@ -127,6 +145,9 @@ namespace ImmutableClassLibrary
         {
 
         }
+
+        public static ImmutableDecimal Create(Decimal value) => new ImmutableDecimal(value);
+
     }
 
     public class ImmutableDouble : ImmutableType<Double>
@@ -135,6 +156,9 @@ namespace ImmutableClassLibrary
         {
 
         }
+
+        public static ImmutableDouble Create(Double value) => new ImmutableDouble(value);
+
     }
 
     public class ImmutableSingle : ImmutableType<Single>
@@ -143,6 +167,9 @@ namespace ImmutableClassLibrary
         {
 
         }
+
+        public static ImmutableSingle Create(Single value) => new ImmutableSingle(value);
+
     }
 
     public class ImmutableInt32 : ImmutableType<Int32>
@@ -151,6 +178,9 @@ namespace ImmutableClassLibrary
         {
 
         }
+
+        public static ImmutableInt32 Create(Int32 value) => new ImmutableInt32(value);
+
     }
 
     public class ImmutableInt16 : ImmutableType<Int16>
@@ -159,6 +189,9 @@ namespace ImmutableClassLibrary
         {
 
         }
+
+        public static ImmutableInt16 Create(Int16 value) => new ImmutableInt16(value);
+
     }
 
 
@@ -168,6 +201,9 @@ namespace ImmutableClassLibrary
         {
 
         }
+
+        public static ImmutableInt64 Create(Int64 value) => new ImmutableInt64(value);
+
     }
 
 
@@ -178,6 +214,9 @@ namespace ImmutableClassLibrary
         {
 
         }
+
+        public static ImmutableUInt32 Create(UInt32 value) => new ImmutableUInt32(value);
+
     }
 
     public class ImmutableUInt16 : ImmutableType<UInt16>
@@ -186,6 +225,9 @@ namespace ImmutableClassLibrary
         {
 
         }
+
+        public static ImmutableUInt16 Create(UInt16 value) => new ImmutableUInt16(value);
+
     }
 
 
@@ -195,6 +237,9 @@ namespace ImmutableClassLibrary
         {
 
         }
+
+        public static ImmutableUInt64 Create(UInt64 value) => new ImmutableUInt64(value);
+
     }
 
     public abstract class ImmutableType<T>
@@ -210,6 +255,8 @@ namespace ImmutableClassLibrary
 
         public T Value => _value;
 
+
+        public static implicit operator T(ImmutableType<T> immutableValue) => immutableValue.Value;
 
         public override int GetHashCode()
         {

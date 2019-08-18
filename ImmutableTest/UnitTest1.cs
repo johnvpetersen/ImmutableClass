@@ -7,6 +7,21 @@ namespace ImmutableTest
     [TestFixture]
     public class UnitTest1
     {
+
+        [Test]
+        public void VerifyImplicitConversion()
+        {
+
+
+            string x = ImmutableString.Create("FOO");
+
+
+            Assert.AreEqual("FOO",x);
+
+
+        }
+
+
         [Test]
         public void VerifyImmutableString()
         {
