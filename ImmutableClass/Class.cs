@@ -8,6 +8,8 @@ using Newtonsoft.Json.Linq;
 
 namespace ImmutableClassLibrary.Classes
 {
+
+    [Obsolete("With the new Immutable Value Types, the ImmutableClass is no longer necessary.", false)]
     public abstract class ImmutableClass
     {
         private bool _lock;

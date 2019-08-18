@@ -263,6 +263,44 @@ namespace ImmutableClassLibraryTests
 
         }
 
+        [Test]
+        public void TestCreateImmutablePerson()
+        {
+            var expected =
+                "{\"FirstName\":\"John\",\"LastName\":\"Petersen\",\"Schools\":[{\"Institution\":\"Mansfield\",\"Year\":\"1988\",\"Degree\":\"BS\"},{\"Institution\":\"St. Joseph's\",\"Year\":\"1993\",\"Degree\":\"MBA\"},{\"Institution\":\"Rutgers\",\"Year\":\"2004\",\"Degree\":\"JD\"}]}";
+
+
+            var schools = new List<ImmutableSchool>()
+            {
+                new ImmutableSchool() { Degree = "BS", Institution = "Mansfield", Year = "1988" },
+                new ImmutableSchool() { Degree = "MBA", Institution = "St. Joseph's", Year = "1993" },
+                new ImmutableSchool() { Degree = "JD", Institution = "Rutgers", Year = "2004" }
+            };
+
+            var person = new ImmutablePerson() {FirstName = "John", LastName = "Petersen",Schools = schools.ToImmutableArray()};
+
+            var actual = JsonConvert.SerializeObject(person);
+
+
+            Assert.AreEqual(expected,actual);
+
+            person.Schools = new ImmutableArray<ImmutableSchool>();
+
+            Assert.AreEqual(3, person.Schools.Value.Length);
+
+            person.Schools.Value[0].Degree = "XX";
+
+            Assert.AreEqual("BS", person.Schools.Value[0].Degree);
+
+
+            var x = new ImmutableArray<ImmutableSchool>();
+
+
+
+        }
+
+
+
 
         [Test]
         public void TestCreatePerson2()
@@ -273,6 +311,7 @@ namespace ImmutableClassLibraryTests
             var person = ImmutableClass.Create<Person>(json);
 
             Assert.AreEqual("John", person.FirstName);
+
         }
 
         public class ImmutableCustomer
@@ -370,6 +409,61 @@ namespace ImmutableClassLibraryTests
             }
 
 
+
+        }
+
+        public class ImmutablePerson
+        {
+            private String _firstName;
+
+            public String FirstName
+            {
+                get => _firstName;
+                set => _firstName = _firstName ?? value;
+            }
+
+            private String _lastName;
+
+            public String LastName
+            {
+                get => _lastName;
+                set => _lastName = _lastName ?? value;
+            }
+
+            private ImmutableArray<ImmutableSchool>? _schools;
+
+            public ImmutableArray<ImmutableSchool>? Schools
+            {
+                get => _schools;
+                set => _schools = _schools ?? value;
+            }
+        }
+
+        public class ImmutableSchool
+        {
+            private String _institution;
+
+            public String Institution
+            {
+                get => _institution;
+                set => _institution = _institution ?? value;
+            }
+
+            private String _year;
+
+            public String Year
+            {
+                get => _year;
+                set => _year = _year ?? value;
+            }
+
+            private String _degree;
+
+            public String Degree
+            {
+                get => _degree;
+                set => _degree = _degree ?? value;
+            }
 
         }
 
